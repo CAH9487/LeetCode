@@ -24,9 +24,7 @@ int lengthOfLongestSubstring(char* s)
     if(len_s)
         len_max = 1;
     for (int begin = 0; begin < len_s; begin++) {
-        for (int len = 1; len < len_s - begin + 1; len++) {
-            if (len < len_max)
-                continue;
+        for (int len = len_max; len < len_s - begin + 1; len++) {
             match = 0;
             if (!isRepeatChar(s, begin, len))
                 len_max = len;
