@@ -18,10 +18,8 @@
   })
 
 // Brute Force Approach
-// Runtime: 1072 ms, faster than 5.61% of C online submissions for Longest
-// Palindromic Substring.
-// Memory Usage: 5.6 MB, less than 62.14% of C online submissions for Longest
-// Palindromic Substring.
+// Runtime: 1072 ms, faster than 5.61% of C online submissions
+// Memory Usage: 5.6 MB, less than 62.14% of C online submissions
 int check_palindrome(char *s) {
   int len = strlen(s);
   int mid = (len + 1) / 2;
@@ -65,10 +63,8 @@ void dump_table(int *table[], int n) {
 }
 
 // Dynamic Programming Approach
-// Runtime: 444 ms, faster than 10.44% of C online submissions for Longest
-// Palindromic Substring.
-// Memory Usage: 181.6 MB, less than 5.13% of C online submissions for Longest
-// Palindromic Substring.
+// Runtime: 444 ms, faster than 10.44% of C online submissions
+// Memory Usage: 181.6 MB, less than 5.13% of C online submissions
 char *longestPalindrome_DP(char *s) {
   int len = strlen(s);
   int **table = NULL;
@@ -118,6 +114,8 @@ char *longestPalindrome_DP(char *s) {
 }
 
 // Manacher Approach
+// Runtime: 4 ms, faster than 95.54% of C online submissions for Longest Palindromic Substring.
+// Memory Usage: 7.9 MB, less than 13.57% of C online submissions for Longest Palindromic Substring.
 char *longestPalindrome(char *s) {
   int len = strlen(s);
   int nMax = 1;
