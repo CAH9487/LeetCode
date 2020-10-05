@@ -139,10 +139,6 @@ char *longestPalindrome(char *s) {
   }
   len = (len << 1) + 1;
   ss[len] = '\0';
-  for (int i = 0; i < len; i++) {
-    printf("[%c], ", ss[i]);
-  }
-  printf("\n");
 
   for (int i = 0; i < len; i++) {
     if (i < max_right) {
@@ -159,15 +155,22 @@ char *longestPalindrome(char *s) {
     nMax = max(nMax, p[i] - 1);
   }
 
+  // get result string
+  int max_idx = -1;
   for (int i = 0; i < len; i++) {
-    printf("p[%d] = %d\n", i, p[i]);
+    if (p[i] == nMax + 1) {
+      max_idx = i;
+      break;
+    }
   }
+  int idx = 0;
+  for (int i = (max_idx - nMax); i < (max_idx + nMax); i++) {
+    if (ss[i] == '#') continue;
+    max_s[idx++] = ss[i];
+  }
+  max_s[idx] = '\0';
 
-  printf("nMax = %d\n", nMax);
-  char result[16] = {0};
-  snprintf(result, 16, "%d", nMax);
-
-  return strdup(result);
+  return strdup(max_s);
 }
 
 int main(int argc, char *argv[]) {
