@@ -4,14 +4,20 @@
 #include <stdbool.h>
 #include <limits.h>
 
+inline bool is_digit(const char c) { return (c >= 0x30 && c <= 0x39); }
+
+// Runtime: 4 ms, faster than 55.89% of C online submissions
+// Memory Usage: 5.6 MB, less than 15.43% of C online submissions
 int atoi(const char *s) {
   int idx = 0;
   int result = 0;
   int neg = -1;
+  bool have_digit = false;
 
   while (s[idx] != '\0') {
     char c = s[idx++];
     int d = (neg == 1) ? -1 * ((int)(c - 0x30)) : (int)(c - 0x30);
+    if ((have_digit || neg >= 0) && !is_digit(c)) break;
     if (c == ' ') continue;
     if (result == 0 && neg == -1 && c == '-') {
       neg = 1;
@@ -21,7 +27,9 @@ int atoi(const char *s) {
       neg = 0;
       continue;
     }
-    if (c < 0x30 || c > 0x39) break;
+    if (!is_digit(c)) break;
+
+    have_digit = true;
 
     if (result > 0 && neg == 1) {
       result *= -1;
@@ -105,6 +113,18 @@ int main(int argc, char *argv[]) {
   printf("\n");
 
   strcpy(s, "00000-42a1234");
+  result = atoi((const char *)s);
+  printf("Input : [%s]\n", s);
+  printf("Output: [%d]\n", result);
+  printf("\n");
+
+  strcpy(s, "9143 with words");
+  result = atoi((const char *)s);
+  printf("Input : [%s]\n", s);
+  printf("Output: [%d]\n", result);
+  printf("\n");
+
+  strcpy(s, "-   123");
   result = atoi((const char *)s);
   printf("Input : [%s]\n", s);
   printf("Output: [%d]\n", result);
