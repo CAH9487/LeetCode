@@ -114,22 +114,25 @@ char *longestPalindrome_DP(char *s) {
 }
 
 // Manacher Approach
-// Runtime: 4 ms, faster than 95.54% of C online submissions for Longest Palindromic Substring.
-// Memory Usage: 7.9 MB, less than 13.57% of C online submissions for Longest Palindromic Substring.
+// Runtime: 4 ms, faster than 95.54% of C online submissions
+// Memory Usage: 7.9 MB, less than 13.57% of C online submissions
+// reference: https://havincy.github.io/blog/post/ManacherAlgorithm/
+//            https://zhuanlan.zhihu.com/p/102640593
 char *longestPalindrome(char *s) {
   int len = strlen(s);
   int nMax = 1;
-  int pos = 0;
+  int center = 0;
   int max_right = -1;
   char *ss = (char *)malloc(((len << 1) + 2) * sizeof(char));
   char *max_s = (char *)malloc((len + 1) * sizeof(char));
-  int *p = (int *)malloc(((len << 1) + 1) * sizeof(int));
-  memset(p, 0, (len << 1) * sizeof(char));
+  int *radius = (int *)malloc(((len << 1) + 1) * sizeof(int));
+  memset(radius, 0, (len << 1) * sizeof(char));
   if (len <= 1) {
     strcpy(ss, s);
     return ss;
   }
-
+  
+  // "ABA" => "#A#B#A#", avoid special handling for odd & even string length
   ss[0] = '#';
   for (int i = 0; i < len; i++) {
     ss[(i << 1) + 1] = s[i];
@@ -140,23 +143,40 @@ char *longestPalindrome(char *s) {
 
   for (int i = 0; i < len; i++) {
     if (i < max_right) {
-      p[i] = min(p[(pos << 1) - i], max_right - i);
+      /*
+        Case 1: radius from center to right are same as left to center
+                set radius as radius[symmetry_point]
+        index : 0  1  2  3  4  5  6  7  8  9  10
+        string: #  A  #  A  #  B  #  A  #  A  #
+        radius: 0  1  2  1  0  5  0  1  2  1  0
+                ↑              ↑              ↑
+              left           center         right
+        
+        Case 2: index + radius[symmetry_point] > right,
+                just set radius to right-index as start
+        index : 0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18
+        string: #  A  #  B  #  C  #  B  #  C  #  B  #  C  #  B  #  B  #
+        radius: 0  1  0  1  0  5  0  5  0  7  0  5  0  X
+                      ↑                    ↑                    ↑
+                    left                 center               right
+      */
+      radius[i] = min(radius[(center << 1) - i], max_right - i);
     } else {
-      p[i] = 1;
+      radius[i] = 1;
     }
-    while (i - p[i] >= 0 && i + p[i] < len && ss[i - p[i]] == ss[i + p[i]])
-      p[i]++;
-    if (i + p[i] > max_right) {
-      pos = i;
-      max_right = i + p[i];
+    while (i - radius[i] >= 0 && i + radius[i] < len && ss[i - radius[i]] == ss[i + radius[i]])
+      radius[i]++;
+    if (i + radius[i] > max_right) {
+      center = i;
+      max_right = i + radius[i];
     }
-    nMax = max(nMax, p[i] - 1);
+    nMax = max(nMax, radius[i] - 1);
   }
 
   // get result string
   int max_idx = -1;
   for (int i = 0; i < len; i++) {
-    if (p[i] == nMax + 1) {
+    if (radius[i] == nMax + 1) {
       max_idx = i;
       break;
     }
