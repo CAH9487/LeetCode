@@ -7,34 +7,34 @@
 int atoi(const char *s) {
   int idx = 0;
   int result = 0;
-  bool neg = false;
+  int neg = -1;
 
   while (s[idx] != '\0') {
     char c = s[idx++];
+    int d = (neg == 1) ? -1 * ((int)(c - 0x30)) : (int)(c - 0x30);
     if (c == ' ') continue;
-    if (result == 0 && !neg && c == '-') {
-      neg = true;
+    if (result == 0 && neg == -1 && c == '-') {
+      neg = 1;
       continue;
     }
-    if (result == 0 && !neg && c == '+') continue;
+    if (result == 0 && neg == -1 && c == '+') {
+      neg = 0;
+      continue;
+    }
     if (c < 0x30 || c > 0x39) break;
 
-    if (result > 0 && neg) {
+    if (result > 0 && neg == 1) {
       result *= -1;
-      neg = !neg;
     }
 
-    if (result > INT_MAX / 10 ||
-        (result == INT_MAX / 10 && ((int)(c - 0x30)) > 7)) {
+    if (result > INT_MAX / 10 || (result == INT_MAX / 10 && d > 7)) {
       return INT_MAX;
     }
-    if (result < INT_MIN / 10 ||
-        (result == INT_MIN / 10 && ((int)(c - 0x30)) > 8)) {
+    if (result < INT_MIN / 10 || (result == INT_MIN / 10 && d < -8)) {
       return INT_MIN;
     }
 
-    result = result * 10 +
-             ((result >= 0) ? (int)(c - 0x30) : (-1 * (int)(c - 0x30)));
+    result = result * 10 + d;
   }
 
   return result;
@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
   printf("Input : [%s]\n", s);
   printf("Output: [%d]\n", result);
   printf("\n");
-  
+
   strcpy(s, "+-12");
   result = atoi((const char *)s);
   printf("Input : [%s]\n", s);
@@ -99,6 +99,12 @@ int main(int argc, char *argv[]) {
   printf("\n");
 
   strcpy(s, "-2147483649");
+  result = atoi((const char *)s);
+  printf("Input : [%s]\n", s);
+  printf("Output: [%d]\n", result);
+  printf("\n");
+
+  strcpy(s, "00000-42a1234");
   result = atoi((const char *)s);
   printf("Input : [%s]\n", s);
   printf("Output: [%d]\n", result);
