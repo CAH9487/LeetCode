@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <limits.h>
 
-inline bool is_digit(const char c) { return (c >= 0x30 && c <= 0x39); }
+static inline bool is_digit(const char c) { return (c >= 0x30 && c <= 0x39); }
 
 // Runtime: 4 ms, faster than 55.89% of C online submissions
 // Memory Usage: 5.6 MB, less than 15.43% of C online submissions
