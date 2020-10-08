@@ -18,79 +18,28 @@ static inline bool WD_in_string(const char *s)
   return false;
 }
 
-bool isMatch(const char *s, const char *p)
+// Recursive Approach
+// Runtime: 60 ms, faster than 16.59% of C online submissions
+// Memory Usage: 5.4 MB, less than 35.87% of C online submissions
+// https://ithelp.ithome.com.tw/articles/10213698
+bool isMatch_Recursive(const char *s, const char *p)
 {
   int s_len = strlen(s);
   int p_len = strlen(p);
-  char s_cur = '\0';
-  char p_prev = '\0';
-  char p_cur = '\0';
-  int j = 0;
-  if ((s_len == 0 || p_len == 0) && s_len != p_len)
-    return false;
-  if (s_len != p_len && !WD_in_string(p))
-    return false;
-  p_cur = p[0];
-  if (isWD(p_cur))
-    return false;
-  for (int i = 0; s[i] && p_cur; i++)
-  {
-    if (isWD(p_prev) && isWD(p_cur))
-      return false;
-    s_cur = s[i];
-    if (s_cur == p_cur)
-    {
-      p_prev = p_cur;
-      p_cur = p[++j];
-      continue;
-    }
-    else if (isDot(p_cur))
-    {
-      p_prev = p_cur;
-      p_cur = p[++j];
-      continue;
-    }
-    else if (isWD(p_cur))
-    {
-      if (s_cur == p_prev)
-        continue;
-      else if (isDot(p_prev))
-        continue;
-    }
+  bool match = false;
+  if (p_len == 0 && s_len == 0)
+    return true;
+  match = s_len > 0 && (s[0] == p[0] || isDot(p[0]));
+  if (p_len >= 2 && isWD(p[1]))
+    return isMatch_Recursive(s, &p[2]) || (match && isMatch_Recursive(&s[1], p));
+  else
+    return match && isMatch_Recursive(&s[1], &p[1]);
+}
 
-  L_LABEL:
-    p_prev = p_cur;
-    p_cur = p[++j];
-    if (isWD(p_prev) && isWD(p_cur))
-      return false;
-    if (s_cur == p_cur)
-    {
-      p_prev = p_cur;
-      p_cur = p[++j];
-      continue;
-    }
-    else if (isDot(p_cur))
-    {
-      p_prev = p_cur;
-      p_cur = p[++j];
-      continue;
-    }
-    else if (isWD(p_cur))
-    {
-      if (s_cur == p_prev)
-        continue;
-      else if (isDot(p_prev))
-        continue;
-      else
-        goto L_LABEL;
-    }
-    else
-      return false;
-  }
-
-  if (p_cur != '\0' && j < p_len - 1)
-    return false;
-  return true;
+// DP Approach
+bool isMatch_DP(const char *s, const char *p)
+{
+  return false;
 }
 
 int main(int argc, char *argv[])
@@ -101,7 +50,7 @@ int main(int argc, char *argv[])
 
   strcpy(s, "aa");
   strcpy(p, "a");
-  result = isMatch((const char *)s, (const char *)p);
+  result = isMatch_DP((const char *)s, (const char *)p);
   printf("Input : s = [%s], p = [%s]\n", s, p);
   printf("Output: %s\n", result ? "True" : "False");
   if (result != false)
@@ -110,7 +59,7 @@ int main(int argc, char *argv[])
 
   strcpy(s, "aa");
   strcpy(p, "a*");
-  result = isMatch((const char *)s, (const char *)p);
+  result = isMatch_DP((const char *)s, (const char *)p);
   printf("Input : s = [%s], p = [%s]\n", s, p);
   printf("Output: %s\n", result ? "True" : "False");
   if (result != true)
@@ -119,7 +68,7 @@ int main(int argc, char *argv[])
 
   strcpy(s, "ab");
   strcpy(p, ".*");
-  result = isMatch((const char *)s, (const char *)p);
+  result = isMatch_DP((const char *)s, (const char *)p);
   printf("Input : s = [%s], p = [%s]\n", s, p);
   printf("Output: %s\n", result ? "True" : "False");
   if (result != true)
@@ -128,7 +77,7 @@ int main(int argc, char *argv[])
 
   strcpy(s, "aab");
   strcpy(p, "c*a*b");
-  result = isMatch((const char *)s, (const char *)p);
+  result = isMatch_DP((const char *)s, (const char *)p);
   printf("Input : s = [%s], p = [%s]\n", s, p);
   printf("Output: %s\n", result ? "True" : "False");
   if (result != true)
@@ -137,7 +86,7 @@ int main(int argc, char *argv[])
 
   strcpy(s, "mississippi");
   strcpy(p, "mis*is*p*.");
-  result = isMatch((const char *)s, (const char *)p);
+  result = isMatch_DP((const char *)s, (const char *)p);
   printf("Input : s = [%s], p = [%s]\n", s, p);
   printf("Output: %s\n", result ? "True" : "False");
   if (result != false)
@@ -146,7 +95,7 @@ int main(int argc, char *argv[])
 
   strcpy(s, "mississippi");
   strcpy(p, "mis*is*ip*.");
-  result = isMatch((const char *)s, (const char *)p);
+  result = isMatch_DP((const char *)s, (const char *)p);
   printf("Input : s = [%s], p = [%s]\n", s, p);
   printf("Output: %s\n", result ? "True" : "False");
   if (result != true)
@@ -155,7 +104,7 @@ int main(int argc, char *argv[])
 
   strcpy(s, "aab");
   strcpy(p, "c*a**b");
-  result = isMatch((const char *)s, (const char *)p);
+  result = isMatch_DP((const char *)s, (const char *)p);
   printf("Input : s = [%s], p = [%s]\n", s, p);
   printf("Output: %s\n", result ? "True" : "False");
   if (result != false)
@@ -164,7 +113,7 @@ int main(int argc, char *argv[])
 
   strcpy(s, "aa");
   strcpy(p, "*a");
-  result = isMatch((const char *)s, (const char *)p);
+  result = isMatch_DP((const char *)s, (const char *)p);
   printf("Input : s = [%s], p = [%s]\n", s, p);
   printf("Output: %s\n", result ? "True" : "False");
   if (result != false)
@@ -173,7 +122,7 @@ int main(int argc, char *argv[])
 
   strcpy(s, "ab");
   strcpy(p, ".*c");
-  result = isMatch((const char *)s, (const char *)p);
+  result = isMatch_DP((const char *)s, (const char *)p);
   printf("Input : s = [%s], p = [%s]\n", s, p);
   printf("Output: %s\n", result ? "True" : "False");
   if (result != false)
@@ -182,7 +131,7 @@ int main(int argc, char *argv[])
 
   strcpy(s, "aaa");
   strcpy(p, "aaaa");
-  result = isMatch((const char *)s, (const char *)p);
+  result = isMatch_DP((const char *)s, (const char *)p);
   printf("Input : s = [%s], p = [%s]\n", s, p);
   printf("Output: %s\n", result ? "True" : "False");
   if (result != false)
@@ -191,7 +140,7 @@ int main(int argc, char *argv[])
 
   strcpy(s, "aaa");
   strcpy(p, ".a");
-  result = isMatch((const char *)s, (const char *)p);
+  result = isMatch_DP((const char *)s, (const char *)p);
   printf("Input : s = [%s], p = [%s]\n", s, p);
   printf("Output: %s\n", result ? "True" : "False");
   if (result != false)
@@ -200,10 +149,28 @@ int main(int argc, char *argv[])
 
   strcpy(s, "aaa");
   strcpy(p, "a*a");
-  result = isMatch((const char *)s, (const char *)p);
+  result = isMatch_DP((const char *)s, (const char *)p);
+  printf("Input : s = [%s], p = [%s]\n", s, p);
+  printf("Output: %s\n", result ? "True" : "False");
+  if (result != true)
+    printf("----- X\n");
+  printf("\n");
+
+  strcpy(s, "aaa");
+  strcpy(p, "ab*a");
+  result = isMatch_DP((const char *)s, (const char *)p);
   printf("Input : s = [%s], p = [%s]\n", s, p);
   printf("Output: %s\n", result ? "True" : "False");
   if (result != false)
+    printf("----- X\n");
+  printf("\n");
+
+  strcpy(s, "aaa");
+  strcpy(p, "ab*a*c*a");
+  result = isMatch_DP((const char *)s, (const char *)p);
+  printf("Input : s = [%s], p = [%s]\n", s, p);
+  printf("Output: %s\n", result ? "True" : "False");
+  if (result != true)
     printf("----- X\n");
   printf("\n");
 
