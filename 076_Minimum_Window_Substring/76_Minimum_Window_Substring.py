@@ -1,7 +1,12 @@
 import unittest
 from typing import Any, List
+from collections import defaultdict
 
 
+'''
+Runtime: 536 ms, faster than 10.06% of Python3 online submissions
+Memory Usage: 14.8 MB, less than 5.90% of Python3 online submissions
+'''
 class Solution:
     '''
     constrain: O(n)
@@ -10,29 +15,36 @@ class Solution:
         if(not s or not t):
             return ''
 
-        map = {}
+        map = defaultdict(lambda: 0)
+        bag = defaultdict(lambda: 0)
         for c in t:
-            if(c in map):
-                map[c][0] += 1
-            else:
-                # [count in t, index list]
-                map[c] = [1, []]
+            map[c] += 1
+            bag[c] = 0
 
-        for i in range(len(s)):
-            c = s[i]
-            if(c in map):
-                map[c][1].append(i)
+        def check_match(x, y): return all(
+            a <= b for a, b in zip(x.values(), y.values()))
 
-        candidates = []
-        for cnt, idx_list in map.values():
-            if(len(idx_list) < cnt):
-                return ''
-            candidates.extend(idx_list[-cnt:])
-        if(not candidates):
+        window = (len(s)+1, -1, -1)
+        left = 0
+        for right in range(len(s)):
+            c = s[right]
+            if(c in bag):
+                bag[c] += 1
+
+            while(left < right+1 and check_match(map, bag)):
+                length = right - left + 1
+                if(length < window[0]):
+                    window = (length, left, right+1)
+                c = s[left]
+                if(c in bag):
+                    bag[c] -= 1
+                left += 1
+
+        if(window[0] <= len(s)):
+            return s[window[1]:window[2]]
+        else:
             return ''
-        begin, end = min(candidates), max(candidates)
-        result = s[begin:end+1]
-        return result
+
 
 
 class TestCase(unittest.TestCase):
@@ -63,6 +75,13 @@ class TestCase(unittest.TestCase):
         S = "cabwefgewcwaefgcf"
         T = "cae"
         a = "cwae"
+        r = self.sln.minWindow(S, T)
+        self.assertEqual(r, a)
+
+    def test_4(self):
+        S = "a"
+        T = "a"
+        a = "a"
         r = self.sln.minWindow(S, T)
         self.assertEqual(r, a)
 
