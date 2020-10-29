@@ -21,8 +21,8 @@ class Solution:
             map[c] += 1
             bag[c] = 0
 
-        def check_match(x, y): return all(
-            a <= b for a, b in zip(x.values(), y.values()))
+        def check_match(x, y):
+            return all(a <= b for a, b in zip(x.values(), y.values()))
 
         window = (len(s)+1, -1, -1)
         left = 0
@@ -78,7 +78,7 @@ class TestCase(unittest.TestCase):
         r = self.sln.minWindow(S, T)
         self.assertEqual(r, a)
 
-    def test_4(self):
+    def test_5(self):
         S = "a"
         T = "a"
         a = "a"
